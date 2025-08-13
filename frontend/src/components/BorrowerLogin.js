@@ -66,11 +66,18 @@ const BorrowerLogin = () => {
     return strength;
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (type, field, value) => {
+    if (type === 'login') {
+      setLoginData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    } else {
+      setRegisterData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
 
     // Real-time validation
     const errors = { ...validationErrors };
@@ -78,32 +85,41 @@ const BorrowerLogin = () => {
     switch (field) {
       case 'studentId':
         if (value && !validateStudentId(value)) {
-          errors.studentId = 'Student ID must be 7 digits';
+          errors[`${type}_${field}`] = 'Student ID must be 7 digits';
         } else {
-          delete errors.studentId;
+          delete errors[`${type}_${field}`];
         }
         break;
       case 'email':
         if (value && !validateEmail(value)) {
-          errors.email = 'Please enter a valid email address';
+          errors[`${type}_${field}`] = 'Please enter a valid email address';
         } else {
-          delete errors.email;
+          delete errors[`${type}_${field}`];
         }
         break;
       case 'password':
-        const strength = calculatePasswordStrength(value);
-        setPasswordStrength(strength);
-        if (value && strength < 50) {
-          errors.password = 'Password should be stronger';
+        if (type === 'register') {
+          const strength = calculatePasswordStrength(value);
+          setPasswordStrength(strength);
+          if (value && strength < 50) {
+            errors[`${type}_${field}`] = 'Password should be stronger';
+          } else {
+            delete errors[`${type}_${field}`];
+          }
+        }
+        break;
+      case 'confirmPassword':
+        if (value && value !== registerData.password) {
+          errors[`${type}_${field}`] = 'Passwords do not match';
         } else {
-          delete errors.password;
+          delete errors[`${type}_${field}`];
         }
         break;
       case 'phone':
         if (value && value.length < 10) {
-          errors.phone = 'Phone number should be at least 10 digits';
+          errors[`${type}_${field}`] = 'Phone number should be at least 10 digits';
         } else {
-          delete errors.phone;
+          delete errors[`${type}_${field}`];
         }
         break;
     }
@@ -111,19 +127,14 @@ const BorrowerLogin = () => {
     setValidationErrors(errors);
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     // Validate required fields
     const errors = {};
-    if (!formData.studentId) errors.studentId = 'Student ID is required';
-    if (!formData.password) errors.password = 'Password is required';
-    if (!formData.department) errors.department = 'Department is required';
-    if (!formData.year) errors.year = 'Year is required';
-    if (!formData.semester) errors.semester = 'Semester is required';
-    if (!formData.email) errors.email = 'Email is required';
-    if (!formData.phone) errors.phone = 'Phone is required';
+    if (!loginData.studentId) errors.login_studentId = 'Student ID is required';
+    if (!loginData.password) errors.login_password = 'Password is required';
 
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
@@ -134,14 +145,14 @@ const BorrowerLogin = () => {
     // Simulate login process
     setTimeout(() => {
       // Demo credentials check
-      if (formData.studentId === '2021001' && formData.password === 'student123') {
+      if (loginData.studentId === '2021001' && loginData.password === 'student123') {
         toast({
           title: "Login Successful",
-          description: `Welcome back, ${formData.studentId}!`,
+          description: `Welcome back, ${loginData.studentId}!`,
         });
         localStorage.setItem('userRole', 'borrower');
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('studentData', JSON.stringify(formData));
+        localStorage.setItem('studentData', JSON.stringify(loginData));
         navigate('/borrower/dashboard');
       } else {
         toast({
@@ -152,6 +163,47 @@ const BorrowerLogin = () => {
       }
       setIsLoading(false);
     }, 1500);
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    // Validate required fields
+    const errors = {};
+    if (!registerData.name) errors.register_name = 'Full name is required';
+    if (!registerData.studentId) errors.register_studentId = 'Student ID is required';
+    if (!registerData.password) errors.register_password = 'Password is required';
+    if (!registerData.confirmPassword) errors.register_confirmPassword = 'Please confirm password';
+    if (!registerData.department) errors.register_department = 'Department is required';
+    if (!registerData.year) errors.register_year = 'Year is required';
+    if (!registerData.semester) errors.register_semester = 'Semester is required';
+    if (!registerData.email) errors.register_email = 'Email is required';
+    if (!registerData.phone) errors.register_phone = 'Phone is required';
+    if (!registerData.acceptTerms) errors.register_acceptTerms = 'Please accept terms and conditions';
+
+    if (registerData.password !== registerData.confirmPassword) {
+      errors.register_confirmPassword = 'Passwords do not match';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setIsLoading(false);
+      return;
+    }
+
+    // Simulate registration process
+    setTimeout(() => {
+      toast({
+        title: "Registration Successful",
+        description: `Welcome to the library, ${registerData.name}!`,
+      });
+      localStorage.setItem('userRole', 'borrower');
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('studentData', JSON.stringify(registerData));
+      navigate('/borrower/dashboard');
+      setIsLoading(false);
+    }, 2000);
   };
 
   const handleForgotPassword = () => {
