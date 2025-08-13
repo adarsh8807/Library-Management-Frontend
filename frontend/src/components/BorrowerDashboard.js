@@ -35,7 +35,8 @@ import {
   Sparkles,
   Brain,
   Trophy,
-  Gift
+  Gift,
+  RefreshCw
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../hooks/use-toast';
