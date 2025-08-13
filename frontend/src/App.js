@@ -5,6 +5,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { Toaster } from "./components/ui/toaster";
 import AdminLogin from "./components/AdminLogin";
 import AdminDashboard from "./components/AdminDashboard";
+import BorrowerLogin from "./components/BorrowerLogin";
+import BorrowerDashboard from "./components/BorrowerDashboard";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -32,7 +34,7 @@ const Home = () => {
           Library Management System
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto">
-          A modern, efficient library management solution for academic institutions
+          A modern, world-class library management solution for academic institutions
         </p>
         <div className="space-y-4">
           <div>
@@ -44,7 +46,7 @@ const Home = () => {
             </a>
             <a
               href="/borrower"
-              className="inline-flex items-center px-6 py-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Student Portal
             </a>
@@ -78,8 +80,16 @@ function App() {
               } 
             />
             
-            {/* Borrower Routes - Placeholder for now */}
-            <Route path="/borrower" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-2xl">Borrower Portal Coming Soon...</h1></div>} />
+            {/* Borrower Routes */}
+            <Route path="/borrower" element={<BorrowerLogin />} />
+            <Route 
+              path="/borrower/dashboard" 
+              element={
+                <ProtectedRoute requiredRole="borrower">
+                  <BorrowerDashboard />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
