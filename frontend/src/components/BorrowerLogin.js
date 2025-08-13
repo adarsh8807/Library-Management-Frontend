@@ -6,24 +6,37 @@ import { Label } from './ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Checkbox } from './ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Eye, EyeOff, User, Phone, Mail, GraduationCap, Moon, Sun, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, User, Phone, Mail, GraduationCap, Moon, Sun, AlertCircle, CheckCircle2, UserPlus } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../hooks/use-toast';
 import { departments, years, semesters } from '../mockDataEnhanced';
 
 const BorrowerLogin = () => {
-  const [formData, setFormData] = useState({
+  const [activeTab, setActiveTab] = useState('login');
+  const [loginData, setLoginData] = useState({
     studentId: '',
     password: '',
+    rememberMe: false
+  });
+  const [registerData, setRegisterData] = useState({
+    name: '',
+    studentId: '',
+    password: '',
+    confirmPassword: '',
     department: '',
     year: '',
     semester: '',
     phone: '',
     email: '',
-    rememberMe: false
+    acceptTerms: false
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    login: false,
+    register: false,
+    confirm: false
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [passwordStrength, setPasswordStrength] = useState(0);
