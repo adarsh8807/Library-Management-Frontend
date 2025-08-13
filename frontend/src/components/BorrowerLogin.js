@@ -259,276 +259,461 @@ const BorrowerLogin = () => {
         <Card className="shadow-xl border-0 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-semibold text-center text-slate-800 dark:text-slate-100">
-              Student Login
+              Student Portal Access
             </CardTitle>
             <CardDescription className="text-center text-slate-600 dark:text-slate-400">
-              Enter your details to access your library account
+              Login to your account or create a new one
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Student ID */}
-                <div className="space-y-2">
-                  <Label htmlFor="studentId" className="text-slate-700 dark:text-slate-300 font-medium">
-                    Student ID *
-                  </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                    <Input
-                      id="studentId"
-                      type="text"
-                      value={formData.studentId}
-                      onChange={(e) => handleInputChange('studentId', e.target.value)}
-                      className={`pl-10 h-12 transition-all duration-200 ${
-                        validationErrors.studentId 
-                          ? 'border-red-500 focus:border-red-500' 
-                          : formData.studentId && validateStudentId(formData.studentId)
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-slate-200 dark:border-slate-700 focus:border-indigo-500'
-                      }`}
-                      placeholder="Enter 7-digit student ID"
-                      maxLength={7}
-                    />
-                    {formData.studentId && validateStudentId(formData.studentId) && (
-                      <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
-                    )}
-                    {validationErrors.studentId && (
-                      <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 h-4 w-4" />
-                    )}
-                  </div>
-                  {validationErrors.studentId && (
-                    <p className="text-red-500 text-sm flex items-center">
-                      <AlertCircle className="h-3 w-3 mr-1" />
-                      {validationErrors.studentId}
-                    </p>
-                  )}
-                </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+              <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-700">
+                <TabsTrigger value="login" className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+                  <User className="h-4 w-4 mr-2" />
+                  Login
+                </TabsTrigger>
+                <TabsTrigger value="register" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Register
+                </TabsTrigger>
+              </TabsList>
 
-                {/* Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 font-medium">
-                    Password *
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pr-10 h-12 border-slate-200 dark:border-slate-700 focus:border-indigo-500 transition-all duration-200"
-                      placeholder="Enter your password"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-slate-400" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-slate-400" />
-                      )}
-                    </Button>
-                  </div>
-                  {formData.password && (
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-600 dark:text-slate-400">Password Strength:</span>
-                        <span className={`text-xs font-medium ${
-                          passwordStrength < 50 ? 'text-red-600' : 'text-green-600'
-                        }`}>
-                          {getPasswordStrengthText()}
-                        </span>
+              {/* Login Tab */}
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-4">
+                    {/* Student ID */}
+                    <div className="space-y-2">
+                      <Label htmlFor="login-studentId" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Student ID *
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                        <Input
+                          id="login-studentId"
+                          type="text"
+                          value={loginData.studentId}
+                          onChange={(e) => handleInputChange('login', 'studentId', e.target.value)}
+                          className={`pl-10 h-12 transition-all duration-200 ${
+                            validationErrors.login_studentId 
+                              ? 'border-red-500 focus:border-red-500' 
+                              : loginData.studentId && validateStudentId(loginData.studentId)
+                                ? 'border-green-500 focus:border-green-500'
+                                : 'border-slate-200 dark:border-slate-700 focus:border-indigo-500'
+                          }`}
+                          placeholder="Enter 7-digit student ID"
+                          maxLength={7}
+                        />
+                        {loginData.studentId && validateStudentId(loginData.studentId) && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                        )}
+                        {validationErrors.login_studentId && (
+                          <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 h-4 w-4" />
+                        )}
                       </div>
-                      <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
-                          style={{ width: `${passwordStrength}%` }}
+                      {validationErrors.login_studentId && (
+                        <p className="text-red-500 text-sm flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          {validationErrors.login_studentId}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Password */}
+                    <div className="space-y-2">
+                      <Label htmlFor="login-password" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Password *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="login-password"
+                          type={showPassword.login ? 'text' : 'password'}
+                          value={loginData.password}
+                          onChange={(e) => handleInputChange('login', 'password', e.target.value)}
+                          className="pr-10 h-12 border-slate-200 dark:border-slate-700 focus:border-indigo-500 transition-all duration-200"
+                          placeholder="Enter your password"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                          onClick={() => setShowPassword(prev => ({ ...prev, login: !prev.login }))}
+                        >
+                          {showPassword.login ? (
+                            <EyeOff className="h-4 w-4 text-slate-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-slate-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {validationErrors.login_password && (
+                        <p className="text-red-500 text-sm">{validationErrors.login_password}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Remember Me & Forgot Password */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="login-rememberMe"
+                        checked={loginData.rememberMe}
+                        onCheckedChange={(checked) => handleInputChange('login', 'rememberMe', checked)}
+                      />
+                      <Label htmlFor="login-rememberMe" className="text-sm text-slate-600 dark:text-slate-400">
+                        Remember me
+                      </Label>
+                    </div>
+                    <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0">
+                          Forgot Password?
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Reset Password</DialogTitle>
+                          <DialogDescription>
+                            Enter your email address to receive password reset instructions.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <Input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={forgotEmail}
+                            onChange={(e) => setForgotEmail(e.target.value)}
+                          />
+                          <Button onClick={handleForgotPassword} className="w-full">
+                            Send Reset Link
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Signing in...</span>
+                      </div>
+                    ) : (
+                      'Sign In to Library'
+                    )}
+                  </Button>
+
+                  {/* Demo Credentials */}
+                  <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                    <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-1">
+                      Demo Login:
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-500 text-center">
+                      Student ID: <span className="font-mono font-semibold">2021001</span> | 
+                      Password: <span className="font-mono font-semibold">student123</span>
+                    </p>
+                  </div>
+                </form>
+              </TabsContent>
+
+              {/* Register Tab */}
+              <TabsContent value="register">
+                <form onSubmit={handleRegister} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Full Name */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="register-name" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Full Name *
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                        <Input
+                          id="register-name"
+                          type="text"
+                          value={registerData.name}
+                          onChange={(e) => handleInputChange('register', 'name', e.target.value)}
+                          className="pl-10 h-12 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-all duration-200"
+                          placeholder="Enter your full name"
                         />
                       </div>
+                      {validationErrors.register_name && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_name}</p>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Department */}
-                <div className="space-y-2">
-                  <Label className="text-slate-700 dark:text-slate-300 font-medium">
-                    Department *
-                  </Label>
-                  <Select value={formData.department} onValueChange={(value) => handleInputChange('department', value)}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select your department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map(dept => (
-                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Year */}
-                <div className="space-y-2">
-                  <Label className="text-slate-700 dark:text-slate-300 font-medium">
-                    Year *
-                  </Label>
-                  <Select value={formData.year} onValueChange={(value) => handleInputChange('year', value)}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select year" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {years.map(year => (
-                        <SelectItem key={year} value={year}>{year}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Semester */}
-                <div className="space-y-2">
-                  <Label className="text-slate-700 dark:text-slate-300 font-medium">
-                    Semester *
-                  </Label>
-                  <Select value={formData.semester} onValueChange={(value) => handleInputChange('semester', value)}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select semester" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {semesters.map(sem => (
-                        <SelectItem key={sem} value={sem}>{sem}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Phone */}
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-slate-700 dark:text-slate-300 font-medium">
-                    Phone Number *
-                  </Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                    <div className="flex">
-                      <div className="flex items-center px-3 bg-slate-100 dark:bg-slate-700 border border-r-0 border-slate-200 dark:border-slate-600 rounded-l-md text-sm text-slate-600 dark:text-slate-400">
-                        +91
+                    {/* Student ID */}
+                    <div className="space-y-2">
+                      <Label htmlFor="register-studentId" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Student ID *
+                      </Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                        <Input
+                          id="register-studentId"
+                          type="text"
+                          value={registerData.studentId}
+                          onChange={(e) => handleInputChange('register', 'studentId', e.target.value)}
+                          className={`pl-10 h-12 transition-all duration-200 ${
+                            validationErrors.register_studentId 
+                              ? 'border-red-500 focus:border-red-500' 
+                              : registerData.studentId && validateStudentId(registerData.studentId)
+                                ? 'border-green-500 focus:border-green-500'
+                                : 'border-slate-200 dark:border-slate-700 focus:border-purple-500'
+                          }`}
+                          placeholder="Enter 7-digit student ID"
+                          maxLength={7}
+                        />
+                        {registerData.studentId && validateStudentId(registerData.studentId) && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                        )}
                       </div>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="pl-4 h-12 rounded-l-none border-slate-200 dark:border-slate-700 focus:border-indigo-500"
-                        placeholder="Enter phone number"
-                        maxLength={10}
-                      />
+                      {validationErrors.register_studentId && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_studentId}</p>
+                      )}
+                    </div>
+
+                    {/* Password */}
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Password *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="register-password"
+                          type={showPassword.register ? 'text' : 'password'}
+                          value={registerData.password}
+                          onChange={(e) => handleInputChange('register', 'password', e.target.value)}
+                          className="pr-10 h-12 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-all duration-200"
+                          placeholder="Create a password"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                          onClick={() => setShowPassword(prev => ({ ...prev, register: !prev.register }))}
+                        >
+                          {showPassword.register ? (
+                            <EyeOff className="h-4 w-4 text-slate-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-slate-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {registerData.password && (
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-slate-600 dark:text-slate-400">Password Strength:</span>
+                            <span className={`text-xs font-medium ${
+                              passwordStrength < 50 ? 'text-red-600' : 'text-green-600'
+                            }`}>
+                              {getPasswordStrengthText()}
+                            </span>
+                          </div>
+                          <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full transition-all duration-300 ${getPasswordStrengthColor()}`}
+                              style={{ width: `${passwordStrength}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      {validationErrors.register_password && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_password}</p>
+                      )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="register-confirmPassword" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Confirm Password *
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="register-confirmPassword"
+                          type={showPassword.confirm ? 'text' : 'password'}
+                          value={registerData.confirmPassword}
+                          onChange={(e) => handleInputChange('register', 'confirmPassword', e.target.value)}
+                          className="pr-10 h-12 border-slate-200 dark:border-slate-700 focus:border-purple-500 transition-all duration-200"
+                          placeholder="Confirm your password"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                          onClick={() => setShowPassword(prev => ({ ...prev, confirm: !prev.confirm }))}
+                        >
+                          {showPassword.confirm ? (
+                            <EyeOff className="h-4 w-4 text-slate-400" />
+                          ) : (
+                            <Eye className="h-4 w-4 text-slate-400" />
+                          )}
+                        </Button>
+                      </div>
+                      {validationErrors.register_confirmPassword && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_confirmPassword}</p>
+                      )}
+                    </div>
+
+                    {/* Department */}
+                    <div className="space-y-2">
+                      <Label className="text-slate-700 dark:text-slate-300 font-medium">
+                        Department *
+                      </Label>
+                      <Select value={registerData.department} onValueChange={(value) => handleInputChange('register', 'department', value)}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder="Select your department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments.map(dept => (
+                            <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {validationErrors.register_department && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_department}</p>
+                      )}
+                    </div>
+
+                    {/* Year */}
+                    <div className="space-y-2">
+                      <Label className="text-slate-700 dark:text-slate-300 font-medium">
+                        Year *
+                      </Label>
+                      <Select value={registerData.year} onValueChange={(value) => handleInputChange('register', 'year', value)}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {years.map(year => (
+                            <SelectItem key={year} value={year}>{year}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {validationErrors.register_year && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_year}</p>
+                      )}
+                    </div>
+
+                    {/* Semester */}
+                    <div className="space-y-2">
+                      <Label className="text-slate-700 dark:text-slate-300 font-medium">
+                        Semester *
+                      </Label>
+                      <Select value={registerData.semester} onValueChange={(value) => handleInputChange('register', 'semester', value)}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder="Select semester" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {semesters.map(sem => (
+                            <SelectItem key={sem} value={sem}>{sem}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {validationErrors.register_semester && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_semester}</p>
+                      )}
+                    </div>
+
+                    {/* Phone */}
+                    <div className="space-y-2">
+                      <Label htmlFor="register-phone" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Phone Number *
+                      </Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                        <div className="flex">
+                          <div className="flex items-center px-3 bg-slate-100 dark:bg-slate-700 border border-r-0 border-slate-200 dark:border-slate-600 rounded-l-md text-sm text-slate-600 dark:text-slate-400">
+                            +91
+                          </div>
+                          <Input
+                            id="register-phone"
+                            type="tel"
+                            value={registerData.phone}
+                            onChange={(e) => handleInputChange('register', 'phone', e.target.value)}
+                            className="pl-4 h-12 rounded-l-none border-slate-200 dark:border-slate-700 focus:border-purple-500"
+                            placeholder="Enter phone number"
+                            maxLength={10}
+                          />
+                        </div>
+                      </div>
+                      {validationErrors.register_phone && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_phone}</p>
+                      )}
+                    </div>
+
+                    {/* Email */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="register-email" className="text-slate-700 dark:text-slate-300 font-medium">
+                        Email Address *
+                      </Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                        <Input
+                          id="register-email"
+                          type="email"
+                          value={registerData.email}
+                          onChange={(e) => handleInputChange('register', 'email', e.target.value)}
+                          className={`pl-10 h-12 transition-all duration-200 ${
+                            validationErrors.register_email 
+                              ? 'border-red-500' 
+                              : registerData.email && validateEmail(registerData.email)
+                                ? 'border-green-500'
+                                : 'border-slate-200 dark:border-slate-700 focus:border-purple-500'
+                          }`}
+                          placeholder="Enter your email address"
+                        />
+                        {registerData.email && validateEmail(registerData.email) && (
+                          <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                        )}
+                      </div>
+                      {validationErrors.register_email && (
+                        <p className="text-red-500 text-sm">{validationErrors.register_email}</p>
+                      )}
                     </div>
                   </div>
-                  {validationErrors.phone && (
-                    <p className="text-red-500 text-sm">{validationErrors.phone}</p>
-                  )}
-                </div>
 
-                {/* Email */}
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">
-                    Email Address *
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`pl-10 h-12 transition-all duration-200 ${
-                        validationErrors.email 
-                          ? 'border-red-500' 
-                          : formData.email && validateEmail(formData.email)
-                            ? 'border-green-500'
-                            : 'border-slate-200 dark:border-slate-700 focus:border-indigo-500'
-                      }`}
-                      placeholder="Enter your email address"
+                  {/* Terms and Conditions */}
+                  <div className="flex items-start space-x-2">
+                    <Checkbox
+                      id="register-acceptTerms"
+                      checked={registerData.acceptTerms}
+                      onCheckedChange={(checked) => handleInputChange('register', 'acceptTerms', checked)}
+                      className="mt-1"
                     />
-                    {formData.email && validateEmail(formData.email) && (
-                      <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
-                    )}
+                    <Label htmlFor="register-acceptTerms" className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      I agree to the <span className="text-purple-600 hover:underline cursor-pointer">Terms of Service</span> and <span className="text-purple-600 hover:underline cursor-pointer">Privacy Policy</span>
+                    </Label>
                   </div>
-                  {validationErrors.email && (
-                    <p className="text-red-500 text-sm">{validationErrors.email}</p>
+                  {validationErrors.register_acceptTerms && (
+                    <p className="text-red-500 text-sm">{validationErrors.register_acceptTerms}</p>
                   )}
-                </div>
-              </div>
 
-              {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rememberMe"
-                    checked={formData.rememberMe}
-                    onCheckedChange={(checked) => handleInputChange('rememberMe', checked)}
-                  />
-                  <Label htmlFor="rememberMe" className="text-sm text-slate-600 dark:text-slate-400">
-                    Remember me
-                  </Label>
-                </div>
-                <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="link" className="text-indigo-600 hover:text-indigo-700 p-0">
-                      Forgot Password?
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Reset Password</DialogTitle>
-                      <DialogDescription>
-                        Enter your email address to receive password reset instructions.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        value={forgotEmail}
-                        onChange={(e) => setForgotEmail(e.target.value)}
-                      />
-                      <Button onClick={handleForgotPassword} className="w-full">
-                        Send Reset Link
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Signing in...</span>
-                  </div>
-                ) : (
-                  'Sign In to Library'
-                )}
-              </Button>
-            </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-              <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-2">
-                Demo Credentials:
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-500 text-center">
-                Student ID: <span className="font-mono font-semibold">2021001</span> | 
-                Password: <span className="font-mono font-semibold">student123</span>
-              </p>
-            </div>
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Creating account...</span>
+                      </div>
+                    ) : (
+                      'Create Library Account'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 
