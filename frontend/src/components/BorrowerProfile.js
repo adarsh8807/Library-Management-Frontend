@@ -249,7 +249,6 @@ const BorrowerProfile = ({ studentData }) => {
                 {/* Avatar Section */}
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-20 h-20">
-                    <AvatarImage src={profileData.avatar} />
                     <AvatarFallback className="text-2xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-400">
                       {profileData.name.charAt(0)}
                     </AvatarFallback>
